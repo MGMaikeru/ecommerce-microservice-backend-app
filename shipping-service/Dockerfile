@@ -11,7 +11,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 
 # Environment variables
 ENV SPRING_PROFILES_ACTIVE=dev
-ENV JAVA_OPTS="-Xms256m -Xmx512m"
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -XX:+UseContainerSupport"
 ENV EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
 ENV SPRING_CLOUD_CONFIG_URI=http://cloud-config:8888
 ENV ORDER_SERVICE_HOST=http://order-service:8300

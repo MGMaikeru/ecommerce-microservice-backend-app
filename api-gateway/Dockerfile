@@ -11,7 +11,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 
 # Environment variables
 ENV SPRING_PROFILES_ACTIVE=dev
-ENV JAVA_OPTS="-Xms256m -Xmx512m"
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -XX:+UseContainerSupport"
 
 # Copy the JAR file
 COPY ${JAR_FILE} app.jar

@@ -2,10 +2,18 @@
 REM Script para desplegar la aplicación en Minikube
 
 echo Iniciando Minikube...
-minikube start --cpus=8 --memory=3000m --disk-size=20g
+minikube start --cpus=8 --memory=3500m --disk-size=20g
 
 echo Configurando Docker para usar el Docker daemon de Minikube...
 @FOR /f "tokens=*" %%i IN ('minikube -p minikube docker-env --shell cmd') DO @%%i
+
+echo Aplicando namespace para ecommerce...
+kubectl apply -f k8s/00-namespace.yaml
+
+echo Desplegando Zipkin para trazabilidad...
+docker pull openzipkin/zipkin:latest
+kubectl create deployment zipkin --image=openzipkin/zipkin:latest -n ecommerce
+kubectl expose deployment zipkin --type=NodePort --port=9411 -n ecommerce
 
 echo Compilando todos los microservicios...
 call mvnw clean package -DskipTests
@@ -51,8 +59,7 @@ cd proxy-client
 docker build -t proxy-client:0.1.0 .
 cd ..
 
-echo Aplicando configuraciones de Kubernetes...
-kubectl apply -f k8s/00-namespace.yaml
+echo Aplicando configuraciones restantes de Kubernetes...
 kubectl apply -f k8s/01-configmap.yaml
 
 echo Desplegando servicios de infraestructura...
@@ -84,6 +91,15 @@ minikube service api-gateway -n ecommerce --url
 echo Proxy Client:
 minikube service proxy-client -n ecommerce --url
 
+echo Zipkin (para trazabilidad):
+minikube service zipkin -n ecommerce --url
+
 echo Despliegue completado!
 echo Para ver el estado de los pods:
 echo kubectl get pods -n ecommerce
+
+echo Para acceder al dashboard de Zipkin:
+echo Abre en tu navegador: http://[URL de Zipkin arriba]/zipkin/
+
+echo Nota: Asegúrate de que tus microservicios tengan configurada la propiedad:
+echo spring.zipkin.baseUrl=http://zipkin:9411/ en su configuración para enviar trazas a Zipkin.
