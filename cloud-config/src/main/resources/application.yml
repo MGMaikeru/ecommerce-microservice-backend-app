@@ -1,4 +1,3 @@
-
 server:
   port: 9296
 
@@ -38,12 +37,6 @@ management:
       enabled: true
   endpoint:
     health:
+      probes:
+        enabled: true
       show-details: always
-
-
-
-
-
-
-
-
