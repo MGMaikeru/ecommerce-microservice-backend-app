@@ -3,8 +3,8 @@ name: User Service CI/CD Pipeline
 on:
   push:
     branches: [develop]
-    # paths:
-    #   - "user-service/**"
+    paths:
+      - "user-service/**"
   pull_request:
     branches: [develop]
     paths:
