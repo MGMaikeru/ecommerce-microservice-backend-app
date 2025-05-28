@@ -3,8 +3,8 @@ name: User Service CI/CD Pipeline
 on:
   push:
     branches: [develop]
-    # paths:
-    #   - "user-service/**"
+    paths:
+      - "user-service/**"
   pull_request:
     branches: [develop]
     paths:
@@ -37,7 +37,7 @@ jobs:
 
       - name: Upload build artifact
         if: success() && github.event_name == 'push'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: user-service-jar
           path: user-service/target/*.jar
@@ -49,10 +49,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: user-service-jar
           path: user-service/target
