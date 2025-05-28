@@ -13,7 +13,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 ENV SPRING_PROFILES_ACTIVE=dev
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 ENV EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
-ENV SPRING_CLOUD_CONFIG_URI=http://cloud-config:8888
+ENV SPRING_CLOUD_CONFIG_URI=http://cloud-config:9296
 ENV USER_SERVICE_HOST=http://user-service:8700
 ENV PRODUCT_SERVICE_HOST=http://product-service:8500
 
@@ -28,7 +28,7 @@ USER spring
 EXPOSE 8800
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:8800/actuator/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:8800/favourite-service/actuator/health || exit 1
 
 # Run the jar
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -jar app.jar"]

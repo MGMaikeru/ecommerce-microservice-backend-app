@@ -3,15 +3,22 @@ server:
 
 spring:
   zipkin:
-    base-url: ${SPRING_ZIPKIN_BASE_URL:http://localhost:9411/}
+    base-url: ${SPRING_ZIPKIN_BASE_URL:http://zipkin:9411/}
   application:
     name: CLOUD-CONFIG
   cloud:
     config:
       server:
         git:
-          uri: https://github.com/SelimHorri/cloud-config-server
+          uri: https://github.com/MGMaikeru/cloud-config-server
           clone-on-start: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://service-discovery:8761/eureka/}
+  instance:
+    preferIpAddress: true
 
 resilience4j:
   circuitbreaker:

@@ -18,7 +18,7 @@ spec:
           image: cloud-config:0.1.0
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8888
+            - containerPort: 9296
           envFrom:
             - configMapRef:
                 name: ecommerce-config
@@ -32,15 +32,19 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8888
-            initialDelaySeconds: 60
+              port: 9296
+            initialDelaySeconds: 120
             periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 6
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8888
-            initialDelaySeconds: 90
+              port: 9296
+            initialDelaySeconds: 150
             periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
@@ -51,6 +55,6 @@ spec:
   selector:
     app: cloud-config
   ports:
-    - port: 8888
-      targetPort: 8888
+    - port: 9296
+      targetPort: 9296
   type: ClusterIP

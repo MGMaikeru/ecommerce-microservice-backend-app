@@ -2,7 +2,7 @@
 REM Script para desplegar la aplicación en Minikube
 
 echo Iniciando Minikube...
-minikube start --cpus=8 --memory=3500m --disk-size=20g
+minikube start --cpus=8 --memory=3700m --disk-size=20g
 
 echo Configurando Docker para usar el Docker daemon de Minikube...
 @FOR /f "tokens=*" %%i IN ('minikube -p minikube docker-env --shell cmd') DO @%%i
@@ -55,44 +55,46 @@ cd favourite-service
 docker build -t favourite-service:0.1.0 .
 cd ..
 
-cd proxy-client
-docker build -t proxy-client:0.1.0 .
-cd ..
+@REM cd proxy-client
+@REM docker build -t proxy-client:0.1.0 .
+@REM cd ..
 
 echo Aplicando configuraciones restantes de Kubernetes...
 kubectl apply -f k8s/01-configmap.yaml
 
 echo Desplegando servicios de infraestructura...
 kubectl apply -f k8s/02-service-discovery.yaml
+kubectl wait --for=condition=available --timeout=130s deployment/service-discovery -n ecommerce
 kubectl apply -f k8s/03-cloud-config.yaml
-
-echo Esperando a que los servicios de infraestructura estén listos...
-timeout /t 60
+kubectl wait --for=condition=available --timeout=160s deployment/cloud-config -n ecommerce
 
 echo Desplegando servicios de negocio...
 kubectl apply -f k8s/05-user-service.yaml
+kubectl wait --for=condition=available --timeout=150s deployment/user-service -n ecommerce
 kubectl apply -f k8s/06-product-service.yaml
+kubectl wait --for=condition=available --timeout=140s deployment/product-service -n ecommerce
 kubectl apply -f k8s/07-order-service.yaml
+kubectl wait --for=condition=available --timeout=140s deployment/order-service -n ecommerce
 kubectl apply -f k8s/08-payment-service.yaml
+kubectl wait --for=condition=available --timeout=140s deployment/payment-service -n ecommerce
 kubectl apply -f k8s/09-shipping-service.yaml
+kubectl wait --for=condition=available --timeout=140s deployment/shipping-service -n ecommerce
 kubectl apply -f k8s/10-favourite-service.yaml
-
-echo Esperando a que los servicios de negocio estén listos...
-timeout /t 60
+kubectl wait --for=condition=available --timeout=140s deployment/favourite-service -n ecommerce
 
 echo Desplegando servicios de frontend...
 kubectl apply -f k8s/04-api-gateway.yaml
-kubectl apply -f k8s/11-proxy-client.yaml
+@REM kubectl apply -f k8s/11-proxy-client.yaml
 
-echo Obteniendo URLs de acceso...
-echo API Gateway: 
-minikube service api-gateway -n ecommerce --url
+@REM echo Obteniendo URLs de acceso...
+@REM echo API Gateway: 
+@REM minikube service api-gateway -n ecommerce --url
 
-echo Proxy Client:
-minikube service proxy-client -n ecommerce --url
+@REM echo Proxy Client:
+@REM minikube service proxy-client -n ecommerce --url
 
-echo Zipkin (para trazabilidad):
-minikube service zipkin -n ecommerce --url
+@REM echo Zipkin (para trazabilidad):
+@REM minikube service zipkin -n ecommerce --url
 
 echo Despliegue completado!
 echo Para ver el estado de los pods:
