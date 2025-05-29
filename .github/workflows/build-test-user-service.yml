@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -25,15 +27,37 @@ jobs:
           distribution: "temurin"
           cache: maven
 
+      - name: Cache SonarQube packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Build user-service
         run: |
           cd user-service
           ./mvnw clean package -DskipTests
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         run: |
           cd user-service
           ./mvnw test
+          ./mvnw jacoco:report
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_HOST_URL: https://5555-200-3-193-229.ngrok-free.app
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd user-service
+          ./mvnw sonar:sonar \
+            -Dsonar.projectKey=user-service \
+            -Dsonar.projectName='User Service' \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.token=${SONAR_TOKEN} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.ws.headers="ngrok-skip-browser-warning: true"
 
       - name: Upload build artifact
         if: success() && github.event_name == 'push'
