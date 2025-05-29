@@ -88,8 +88,7 @@ public class UserResourceTest {
                 .credentialDto(credentialDto2)
                 .build();
     }
-    
-    @Test
+      @Test
     @DisplayName("Test findAll endpoint returns all users")
     public void testFindAll() throws Exception {
         // Arrange
@@ -99,14 +98,13 @@ public class UserResourceTest {
         // Act & Assert
         mockMvc.perform(get("/api/users"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.collection.size()", is(2)))
-            .andExpect(jsonPath("$.collection[0].userId", is(1)))
-            .andExpect(jsonPath("$.collection[0].firstName", is("John")))
-            .andExpect(jsonPath("$.collection[1].userId", is(2)))
-            .andExpect(jsonPath("$.collection[1].firstName", is("Jane")));
+            .andExpect(jsonPath("$.data.size()", is(2)))
+            .andExpect(jsonPath("$.data[0].userId", is(1)))
+            .andExpect(jsonPath("$.data[0].firstName", is("John")))
+            .andExpect(jsonPath("$.data[1].userId", is(2)))
+            .andExpect(jsonPath("$.data[1].firstName", is("Jane")));
     }
-    
-    @Test
+      @Test
     @DisplayName("Test findById endpoint returns user when exists")
     public void testFindById() throws Exception {
         // Arrange
@@ -115,12 +113,11 @@ public class UserResourceTest {
         // Act & Assert
         mockMvc.perform(get("/api/users/1"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userId", is(1)))
-            .andExpect(jsonPath("$.firstName", is("John")))
-            .andExpect(jsonPath("$.email", is("john@example.com")));
+            .andExpect(jsonPath("$.data.userId", is(1)))
+            .andExpect(jsonPath("$.data.firstName", is("John")))
+            .andExpect(jsonPath("$.data.email", is("john@example.com")));
     }
-    
-    @Test
+      @Test
     @DisplayName("Test save endpoint creates a new user")
     public void testSave() throws Exception {
         // Arrange
@@ -130,13 +127,12 @@ public class UserResourceTest {
         mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userDto1)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userId", is(1)))
-            .andExpect(jsonPath("$.firstName", is("John")))
-            .andExpect(jsonPath("$.email", is("john@example.com")));
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data.userId", is(1)))
+            .andExpect(jsonPath("$.data.firstName", is("John")))
+            .andExpect(jsonPath("$.data.email", is("john@example.com")));
     }
-    
-    @Test
+      @Test
     @DisplayName("Test update endpoint modifies an existing user")
     public void testUpdate() throws Exception {
         // Arrange
@@ -147,11 +143,10 @@ public class UserResourceTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userDto1)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userId", is(1)))
-            .andExpect(jsonPath("$.firstName", is("John")));
+            .andExpect(jsonPath("$.data.userId", is(1)))
+            .andExpect(jsonPath("$.data.firstName", is("John")));
     }
-    
-    @Test
+      @Test
     @DisplayName("Test delete endpoint removes a user")
     public void testDeleteById() throws Exception {
         // Arrange
@@ -160,6 +155,6 @@ public class UserResourceTest {
         // Act & Assert
         mockMvc.perform(delete("/api/users/1"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", is(true)));
+            .andExpect(jsonPath("$.data", is(true)));
     }
 }
