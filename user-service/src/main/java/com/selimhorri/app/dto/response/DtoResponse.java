@@ -1,6 +1,4 @@
-package com.selimhorri.app.dto.response.collection;
-
-import java.util.Collection;
+package com.selimhorri.app.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,18 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class DtoCollectionResponse<T> {
-	
-	private Collection<T> data;
-	
+public class DtoResponse<T> {
+    
+    private T data;
+    
 }
-
-
-
-
-
-
-
-
-
-
