@@ -47,7 +47,7 @@ jobs:
 
       - name: SonarQube Analysis
         env:
-          SONAR_HOST_URL: https://5555-200-3-193-229.ngrok-free.app
+          SONAR_HOST_URL: https://8eb3-2800-484-8587-6500-7c39-2879-f59c-7de4.ngrok-free.app/
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd user-service
