@@ -55,9 +55,9 @@ cd favourite-service
 docker build -t favourite-service:0.1.0 .
 cd ..
 
-@REM cd proxy-client
-@REM docker build -t proxy-client:0.1.0 .
-@REM cd ..
+cd proxy-client
+docker build -t proxy-client:0.1.0 .
+cd ..
 
 echo Aplicando configuraciones restantes de Kubernetes...
 kubectl apply -f k8s/01-configmap.yaml
@@ -84,17 +84,17 @@ kubectl wait --for=condition=available --timeout=140s deployment/favourite-servi
 
 echo Desplegando servicios de frontend...
 kubectl apply -f k8s/04-api-gateway.yaml
-@REM kubectl apply -f k8s/11-proxy-client.yaml
+kubectl apply -f k8s/11-proxy-client.yaml
 
-@REM echo Obteniendo URLs de acceso...
-@REM echo API Gateway: 
-@REM minikube service api-gateway -n ecommerce --url
+echo Obteniendo URLs de acceso...
+echo API Gateway: 
+minikube service api-gateway -n ecommerce --url
 
-@REM echo Proxy Client:
-@REM minikube service proxy-client -n ecommerce --url
+echo Proxy Client:
+minikube service proxy-client -n ecommerce --url
 
-@REM echo Zipkin (para trazabilidad):
-@REM minikube service zipkin -n ecommerce --url
+echo Zipkin (para trazabilidad):
+minikube service zipkin -n ecommerce --url
 
 echo Despliegue completado!
 echo Para ver el estado de los pods:
